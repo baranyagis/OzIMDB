@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
+using System.Data.SqlTypes;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -154,13 +155,16 @@ namespace OzIMDB
                 Film film = (Film)lstFilm.SelectedItem;
                 film.FilmAd = txtFilmAd.Text;
                 film.Puan = SeciliPuan();
+                film.Foto = pboFoto.Image;
                 //Puan ve resim güncelle
 
-                var cmd = new SqlCommand("Update filmler set FilmAd=@p1,Puan=@p2 WHERE Id=@p4", con);
+                var cmd = new SqlCommand("Update filmler set FilmAd=@p1,Puan=@p2,Foto=@p3 WHERE Id=@p4", con);
                 cmd.Parameters.AddWithValue("@p1", film.FilmAd);
-                cmd.Parameters.AddWithValue("@p4", film.Id);
                 cmd.Parameters.AddWithValue("@p2", (object)film.Puan ?? DBNull.Value); //ADO.NET NULL'I BU
+                cmd.Parameters.AddWithValue("@p3", (object)ConvertToByteArray(film.Foto) ?? SqlBinary.Null);
+                cmd.Parameters.AddWithValue("@p4", film.Id);
                 cmd.ExecuteNonQuery();
+
                 filmler.ResetBindings();
             }
         }
@@ -186,6 +190,74 @@ namespace OzIMDB
             if (((RadioButton)sender).Checked)
             {
                 guncelle();
+            }
+        }
+
+        private void pboFoto_Click(object sender, EventArgs e)
+        {
+            if (lstFilm.SelectedIndex==-1)
+                return;
+
+            DialogResult dr=openFileDialog1.ShowDialog();
+            if (dr==DialogResult.OK)
+            {
+
+                pboFoto.Image = Image.FromFile(openFileDialog1.FileName);
+                guncelle();
+            }
+        }
+
+        public static byte[] ConvertToByteArray(Image image)
+        {
+            if (image==null)
+                return null;
+
+            ImageConverter _imageConverter = new ImageConverter();
+            byte[] xByte = (byte[])_imageConverter.ConvertTo(image, typeof(byte[]));
+            return xByte;
+        }
+
+        private void lstFilm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode==Keys.Delete==lstFilm.SelectedIndex>-1)
+            {
+                int sid = lstFilm.SelectedIndex;
+                Film film = (Film)lstFilm.SelectedItem;
+                filmler.Remove(film);
+                FilmSil(film.Id);
+
+                if (sid==lstFilm.SelectedIndex)
+                {
+                    lstFilm.SelectedIndex = -1;
+                    lstFilm.SelectedIndex = sid;
+                }
+                else if(lstFilm.SelectedIndex==-1)
+                {
+                    FormuTemizle();
+                }
+            }
+        }
+
+        private void FormuTemizle()
+        {
+            txtFilmAd.Clear();
+            txtId.Clear();
+            pboFoto.Image = null;
+            rbPuan.Checked = true;
+        }
+
+        private void FilmSil(int ıd)
+        {
+            var cmd = new SqlCommand("DELETE FROM Filmler WHERE Id="+ıd, con);
+            cmd.ExecuteNonQuery();
+
+        }
+        private void txtFilmAd_Leave(object sender, EventArgs e)
+        {
+            if (txtFilmAd.Text.Trim()=="")
+            {
+                MessageBox.Show("Filmin adını giriniz!!!");
+                txtFilmAd.Focus();
             }
         }
     }

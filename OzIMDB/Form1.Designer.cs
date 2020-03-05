@@ -44,6 +44,7 @@
             this.pboFoto = new System.Windows.Forms.PictureBox();
             this.lblFilmAd = new System.Windows.Forms.Label();
             this.lstFilm = new System.Windows.Forms.ListBox();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.gBFilmDetay.SuspendLayout();
             this.gboPuan.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pboFoto)).BeginInit();
@@ -202,16 +203,19 @@
             this.txtFilmAd.Size = new System.Drawing.Size(269, 20);
             this.txtFilmAd.TabIndex = 2;
             this.txtFilmAd.TextChanged += new System.EventHandler(this.txtFilmAd_TextChanged);
+            this.txtFilmAd.Leave += new System.EventHandler(this.txtFilmAd_Leave);
             // 
             // pboFoto
             // 
             this.pboFoto.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.pboFoto.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pboFoto.Location = new System.Drawing.Point(114, 116);
             this.pboFoto.Name = "pboFoto";
             this.pboFoto.Size = new System.Drawing.Size(155, 159);
             this.pboFoto.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pboFoto.TabIndex = 1;
             this.pboFoto.TabStop = false;
+            this.pboFoto.Click += new System.EventHandler(this.pboFoto_Click);
             // 
             // lblFilmAd
             // 
@@ -233,6 +237,12 @@
             this.lstFilm.TabIndex = 2;
             this.lstFilm.ValueMember = "Id";
             this.lstFilm.SelectedIndexChanged += new System.EventHandler(this.lstFilm_SelectedIndexChanged);
+            this.lstFilm.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lstFilm_KeyDown);
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            this.openFileDialog1.Filter = "Resim Dosyaları (*.BMP;*.JPG;*.PNG;*.GIF)|*.BMP;*.JPG;*.JPEG;*.PNG;*.GIF";
             // 
             // Form1
             // 
@@ -270,6 +280,7 @@
         private System.Windows.Forms.TextBox txtId;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.RadioButton rbPuan;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
     }
 }
 
